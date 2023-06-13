@@ -7,6 +7,8 @@ import { useState } from "react";
 
 const Home = () => {
     const [coordinates, setCoordinates] = useState({ lat: 0, lng: 0});
+    const [type, setType] = useState("restaurants");
+    const [ratings, setRatings] = useState("");
 
     return (
     <Flex
@@ -18,7 +20,11 @@ const Home = () => {
       maxHeight={"100vh"}
       position={"relative"}
       >
-    {/*  <Header/>*/}
+      <Header
+      setType  ={setType}
+      setCoordinates = {setCoordinates}
+      setRatings = {setRatings}
+      />
 
      {/*<List/>*/}
 
