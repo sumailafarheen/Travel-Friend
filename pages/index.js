@@ -2,15 +2,54 @@
  import { Header } from "@/components/Header";
 import List from "@/components/List";
 import Map from "@/components/Map";
-import { PlaceDetails } from "@/components/PlaceDetails";
-import { useState } from "react";
+import { PlaceDetail } from "@/components/PlaceDetail";
+import { useEffect, useState } from "react";
+import { getPlacesData } from "./api";
+import Head from "next/head";
+
+const places = [
+  {name : 'sample1'},
+  {name : 'sample2'},
+  {name : 'sample3'},
+  {name : 'sample4'},
+  {name : 'sample5'},
+
+];
 
 const Home = () => {
     const [coordinates, setCoordinates] = useState({ lat: 0, lng: 0});
     const [type, setType] = useState("restaurants");
+    const [bounds, setBounds] = useState(null);
+    const [places, setPlaces] = useState([]);
     const [ratings, setRatings] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
-    return (
+   
+          useEffect(() => {
+            // get the users current location on intial login
+        
+            navigator.geolocation.getCurrentPosition(
+              ({ coords: { latitude, longitude } }) => {
+                console.log({ latitude, longitude });
+                setCoordinates({ lat: latitude, lng: longitude });
+              }
+            );
+          }, []);
+
+         
+        
+          useEffect(() => {
+            setIsLoading(true);
+            getPlacesData( bounds?.sw, bounds?.ne).then((data) => {
+              console.log(data);
+              setPlaces(data);
+              setIsLoading(false);
+            });
+          }, [coordinates, bounds]);
+          
+        
+
+        return (
     <Flex
     justifyContent={"center"}
       alignItems={"center"}
@@ -21,15 +60,18 @@ const Home = () => {
       position={"relative"}
       >
       <Header
-      setType  ={setType}
+      setType  = {setType}
       setCoordinates = {setCoordinates}
       setRatings = {setRatings}
       />
 
-     {/*<List/>*/}
+     <List places={places} isLoading={isLoading}/>
 
 
-     <Map setCoordinates = {setCoordinates} coordinates= {coordinates}/>
+     <Map 
+      setCoordinates = {setCoordinates} 
+      coordinates = {coordinates} 
+      setBounds = {setBounds} />
 
 
      
