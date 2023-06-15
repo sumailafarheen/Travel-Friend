@@ -7,17 +7,10 @@ import { useEffect, useState } from "react";
 import { getPlacesData } from "./api";
 import Head from "next/head";
 
-const places = [
-  {name : 'sample1'},
-  {name : 'sample2'},
-  {name : 'sample3'},
-  {name : 'sample4'},
-  {name : 'sample5'},
-
-];
 
 const Home = () => {
-    const [coordinates, setCoordinates] = useState({ lat: 0, lng: 0});
+    const [filteredPlaces, setFilteredPlaces] = useState([]);
+    const [coordinates, setCoordinates] = useState({});
     const [type, setType] = useState("restaurants");
     const [bounds, setBounds] = useState(null);
     const [places, setPlaces] = useState([]);
@@ -35,6 +28,13 @@ const Home = () => {
               }
             );
           }, []);
+
+          useEffect(() => {
+            const filteredData = places.filter((place) => place.rating > ratings);
+            setFilteredPlaces(filteredData);
+            console.log({ ratings });
+          }, [ratings]);
+        
 
          
         
@@ -59,19 +59,24 @@ const Home = () => {
       maxHeight={"100vh"}
       position={"relative"}
       >
+        <Head>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyAmN4iAQU-nuN-F__7EpC82u7gRLB8f1A0"></script>
+      </Head>
+
       <Header
       setType  = {setType}
       setCoordinates = {setCoordinates}
       setRatings = {setRatings}
       />
 
-     <List places={places} isLoading={isLoading}/>
+     <List places={filteredPlaces.length ? filteredPlaces : places} isLoading={isLoading}/>
 
 
      <Map 
       setCoordinates = {setCoordinates} 
       coordinates = {coordinates} 
-      setBounds = {setBounds} />
+      setBounds = {setBounds} 
+      places = {filteredPlaces.length ? filteredPlaces : places}/>
 
 
      
